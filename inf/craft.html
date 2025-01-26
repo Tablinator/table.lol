@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Element Combiner</title>
+    <div class="canvas2" id="canvas2" ondrop="drop(event)" ondragover="allowDrop(event)" style="width: 0px; height: 0px;">
+    <img src="infi.png" alt="infi.png" style="position: absolute; top: 0; left: 0; height: 220; width: 220px;">
+    </div>
+
+    <style>
+        .panel {
+            width: 100%;
+            height: 200px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        .canvas {
+            width: 100%;
+            height: 400px;
+            background-color: #e8e8e8;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+
+        .element {
+            width: 100px;
+            height: 50px;
+            background-color: #4CAF50;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .element.dragging {
+            opacity: 0.5;
+        }
+
+        #clearCanvasBtn {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #FF6347;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #clearCanvasBtn:hover {
+            background-color: #FF4500;
+        }
+
+        #achievementNotification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1000;
+        }
+
+        #achievementBook {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #achievementBook ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #achievementBook li {
+            margin: 10px 0;
+            font-size: 20px;
+        }
+
+        .achievement-locked {
+            color: grey;
+        }
+
+        .achievement-unlocked {
+            color: white;
+        }
+
+        #closeAchievementsBtn {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #FF6347;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        #closeAchievementsBtn:hover {
+            background-color: #FF4500;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel" id="elementPanel">
+        <div class="element" id="water" draggable="true">Water</div>
+        <div class="element" id="fire" draggable="true">Fire</div>
+        <div class="element" id="wind" draggable="true">Wind</div>
+        <div class="element" id="earth" draggable="true">Earth</div>
+    </div>
+
+    <div class="canvas" id="canvas" ondrop="drop(event)" ondragover="allowDrop(event)">
+    </div>
+
+    <button id="clearCanvasBtn" onclick="clearCanvas()">Clear Canvas</button>
+    <button id="achievementBtn" onclick="openAchievements()">Achievements</button>
+
+
+    <div id="achievementNotification">Check achievements!</div>
+
+    <div id="achievementBook">
+        <ul>
+            <li id="achievement1" class="achievement-locked">Here we go again: Get a new element</li>
+            <li id="achievement2" class="achievement-locked">JoJo: Everything is a JoJo reference (Get JoJo element)</li>
+            <li id="achievement3" class="achievement-locked">Joseph Joestar: Your next line is... This is an infinite craft copy! (Get Joseph element)</li>
+            <li id="achievement4" class="achievement-locked">Reminder: This is hard edition (Get 20 new elements)</li>
+            <li id="achievement5" class="achievement-locked">Connected: Internet connection detected (get Internet element)</li>
+            <li id="achievement6" class="achievement-locked">were goin somewhere: get Life</li>
+        </ul>
+        <button id="closeAchievementsBtn" onclick="closeAchievements()">Close</button>
+    </div>
+
+    <script>
+        let draggedElement = null;
+        let generatedElements = new Set();
+        let elementCombinations = new Set();
+        let unlockedAchievements = new Set();
+        
+
+        const elements = document.querySelectorAll('.element');
+        elements.forEach(element => {
+            element.addEventListener('dragstart', (event) => {
+                draggedElement = event.target;
+                setTimeout(() => {
+                    event.target.classList.add('dragging');
+                }, 0);
+            });
+
+            element.addEventListener('dragend', (event) => {
+                event.target.classList.remove('dragging');
+            });
+        });
+
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            const canvas = document.getElementById('canvas');
+            const newElement = draggedElement.cloneNode(true);
+            const canvasRect = canvas.getBoundingClientRect();
+            const x = event.clientX - canvasRect.left - newElement.offsetWidth / 2;
+            const y = event.clientY - canvasRect.top - newElement.offsetHeight / 2;
+
+            newElement.style.position = 'absolute';
+            newElement.style.left = `${x}px`;
+            newElement.style.top = `${y}px`;
+            newElement.setAttribute('draggable', 'true');
+
+            newElement.addEventListener('dragstart', (event) => {
+                draggedElement = event.target;
+                setTimeout(() => {
+                    event.target.classList.add('dragging');
+                }, 0);
+            });
+
+            newElement.addEventListener('dragend', (event) => {
+                event.target.classList.remove('dragging');
+            });
+
+            canvas.appendChild(newElement);
+        }
+
+        function checkCollision(element1, element2) {
+            const rect1 = element1.getBoundingClientRect();
+            const rect2 = element2.getBoundingClientRect();
+
+            return !(rect1.right < rect2.left || rect1.left > rect2.right || rect1.bottom < rect2.top || rect1.top > rect2.bottom);
+        }
+
+        function combineElements(element1, element2) {
+            const fusionKey = `${element1.textContent}-${element2.textContent}`;
+            if (elementCombinations.has(fusionKey)) return;
+
+            elementCombinations.add(fusionKey);
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    accept: 'application/json',
+                    'content-type': 'application/json',
+                    'X-API_KEY': 'dfebdde4e29145b8b53d216ce94be58a'
+                },
+                body: JSON.stringify({
+                    model: 'chai_v1',
+                    messages: [
+                        {
+                            role: 'ai',
+                            content: `Combine ${element1.textContent} and ${element2.textContent} to create a new element. Please only respond with the name of the combined element.and say only one word also no " and no .`
+                        }
+                    ]
+                })
+            };
+
+            fetch('https://api.chai-research.com/v1/chat/completions', options)
+                .then(res => res.json())
+                .then(res => {
+                    const newElementText = res.choices[0].message.content;
+
+                    const existingElements = document.querySelectorAll('.panel .element');
+                    let exists = false;
+                    existingElements.forEach(existingElement => {
+                        if (existingElement.textContent === newElementText) {
+                            exists = true;
+                        }
+                    });
+
+                    if (!exists) {
+                        const newElement = document.createElement('div');
+                        newElement.className = 'element';
+                        newElement.textContent = newElementText;
+                        newElement.draggable = true;
+                        newElement.style.backgroundColor = "#FF5733";
+
+                        newElement.addEventListener('dragstart', (event) => {
+                            draggedElement = event.target;
+                            setTimeout(() => {
+                                event.target.classList.add('dragging');
+                            }, 0);
+                        });
+
+                        newElement.addEventListener('dragend', (event) => {
+                            event.target.classList.remove('dragging');
+                        });
+
+                        document.getElementById('elementPanel').appendChild(newElement);
+                        generatedElements.add(fusionKey);
+                        checkAchievements(newElementText);
+                    }
+
+                    element1.remove();
+                    element2.remove();
+                })
+                .catch(err => console.error(err));
+        }
+
+        function checkAchievements(newElement) {
+            if (newElement && !unlockedAchievements.has('achievement1')) {
+                unlockAchievement('achievement1');
+            }
+
+            if (newElement === 'JoJo' && !unlockedAchievements.has('achievement2')) {
+                unlockAchievement('achievement2');
+            }
+
+            if (newElement === 'Joseph' && !unlockedAchievements.has('achievement3')) {
+                unlockAchievement('achievement3');
+            }
+
+            if (generatedElements.size >= 20 && !unlockedAchievements.has('achievement4')) {
+                unlockAchievement('achievement4');
+            }
+
+            if (newElement === "Internet" && !unlockedAchievements.has("achievement5")) {
+                unlockAchievement("achivement5");
+            }
+
+            if (newElement === "Life" && !unlockedAchievements.has("achievement6")) {
+                unlockAchievement("achievement6");
+            }
+        }
+
+        function unlockAchievement(achievementId) {
+            const achievementElement = document.getElementById(achievementId);
+            achievementElement.classList.remove('achievement-locked');
+            achievementElement.classList.add('achievement-unlocked');
+            unlockedAchievements.add(achievementId);
+            showNotification();
+        }
+
+        function showNotification() {
+            const notification = document.getElementById('achievementNotification');
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 2000);
+        }
+
+        function clearCanvas() {
+            const canvas = document.getElementById('canvas');
+            canvas.innerHTML = '';
+        }
+
+        function openAchievements() {
+            const achievementBook = document.getElementById('achievementBook');
+            achievementBook.style.display = 'flex';
+        }
+
+        function closeAchievements() {
+            const achievementBook = document.getElementById('achievementBook');
+            achievementBook.style.display = 'none';
+        }
+
+        setInterval(() => {
+            const elementsOnCanvas = document.querySelectorAll('.canvas .element');
+            for (let i = 0; i < elementsOnCanvas.length; i++) {
+                for (let j = i + 1; j < elementsOnCanvas.length; j++) {
+                    if (checkCollision(elementsOnCanvas[i], elementsOnCanvas[j])) {
+                        combineElements(elementsOnCanvas[i], elementsOnCanvas[j]);
+                    }
+                }
+            }
+        }, 500);
+    </script>
+</body>
+</html>
