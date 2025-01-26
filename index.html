@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1c1c1c;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 4rem;
+            color: #f8bbd0; /* Light pink, inspired by Neal.fun */
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-weight: bold;
+        }
+
+        /* Container for video-like buttons */
+        .video-button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .video-button {
+            width: 200px;
+            height: 120px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .video-button img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .video-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+                margin-bottom: 20px;
+            }
+
+            .video-button-container {
+                flex-direction: column;
+            }
+
+            .video-button {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Home Page!</h1>
+
+    <!-- Video-like buttons with thumbnails -->
+    <div class="video-button-container">
+        <div class="video-button" onclick="location.href='gam/type.html'">
+            <img src="typer.jpg" alt="Monkey Typewriter">
+        </div>
+        <div class="video-button" onclick="location.href='cap.html'">
+            <img src="caps.jpeg" alt="File Capsule">
+        </div>
+    </div><br>
+
+    <!-- About button stays as is -->
+    <button onclick="location.href='ab.html'">About</button>
+</body>
+</html>

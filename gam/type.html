@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale: 1.0">
+    <title>typewriter paradox</title>
+    <div class="modal" id="myModal">
+        <p id="modalText">Monkey typewriter paradox made by William Shakespeare google it so I made a game about it where theres infinite amount of books made by thos monkies also theres gambling
+            (click anywhere to proceed)
+        </p>
+    </div>
+    <style>
+        .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        border: 2px solid #333;
+        padding: 20px;
+        width: 80%;
+        max-width: 400px;
+        text-align: center;
+        display: none; /* Hidden initially */
+        }
+
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+        .game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .row {
+            position: absolute;
+            width: 100%;
+            height: 20%;
+        }
+        .row img {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            animation: moveLeft 10s linear infinite;
+        }
+        @keyframes moveLeft {
+            0% {
+                left: 100%;
+            }
+            100% {
+                left: -50px;
+            }
+        }
+        .book-modal, .achievements-modal, .casino-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 2px solid #333;
+            padding: 20px;
+            width: 80%;
+            max-width: 400px;
+            display: none;
+            overflow-y: auto;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            background-color: #f00;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        .achievements-btn, .casino-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 60px;
+        }
+        .casino-btn {
+            bottom: 100px;
+        }
+        .achievement {
+            font-size: 1.2em;
+            margin-top: 10px;
+            color: grey;
+        }
+        .achievement.unlocked {
+            color: black;
+        }
+        .secret-achievement {
+            color: purple;
+        }
+        .notification {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            font-size: 1.5em;
+            border-radius: 5px;
+        }
+        .wheel-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .wheel {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 10px solid #333;
+            margin: auto;
+            position: relative;
+            background: conic-gradient(red 0deg 120deg, green 120deg 240deg, black 240deg 360deg);
+            transition: transform 2s ease-out;
+        }
+        .bet-container {
+            margin-top: 20px;
+        }
+        .awr {
+            position: absolute;
+            top: 59%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            z-index: 10;
+        }
+        .wheel-arrow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;          /* Full width of the container */
+            height: 2px;          /* Line thickness */
+            background-color: rgb(218, 236, 24); /* Line color */
+            margin: 10px 0;       /* Space around the line */  
+        }
+        .baron-achievement {
+            color: gold;
+        }
+        .achievement-bar {
+            position: fixed;
+            top: 50px;
+            right: 20px;
+            background-color: #f39c12;
+            color: white;
+            padding: 5px;
+            width: 200px;
+            border-radius: 5px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container" id="gameContainer">
+    <div class="row" style="bottom: 0;"></div>
+    <div class="row" style="bottom: 20%;"></div>
+    <div class="row" style="bottom: 40%;"></div>
+    <div class="row" style="bottom: 60%;"></div>
+    <div class="row" style="bottom: 80%;"></div>
+</div>
+
+<div class="book-modal" id="bookModal">
+    <button class="close-btn" onclick="closeBook()">Close</button>
+    <h3 id="bookTitle">Book</h3>
+    <p id="randomText"></p>
+</div>
+
+<div class="achievements-modal" id="achievementsModal">
+    <h3>Achievements</h3>
+    <div class="achievement" id="paradoxer">Paradoxer: Open your first book </div>
+    <div class="achievement" id="sourse">Source: Find book №1 </div>
+    <div class="achievement" id="future">Future: Find book saying "futuristic" </div>
+    <div class="achievement" id="oneIn839299365868340200">1 in 839299365868340200: Find book saying "Helloworld" </div>
+    <div class="achievement" id="diavolo">Diavolo: Find book saying "giornogiov" </div>
+    <div class="achievement" id="goldMode">Numeral: Find book with numbers </div>
+    <div class="achievement" id="addiction">Addiction: Open 10,000 books </div>
+    <div class="achievement baron-achievement" id="baron">Baron: Earn 5000 points </div>
+    <button class="close-btn" onclick="closeAchievements()">Close</button>
+</div>
+
+<!-- Casino Modal -->
+<div class="casino-modal" id="casinoModal">
+    <h3>Gambling Wheel</h3>
+    <div class="wheel-container">
+        <div class="wheel" id="wheel"></div>
+        <img src="a.png" class="wheel-arrow" id="wheelArrow">
+    </div>
+    <div class="bet-container">
+        <input type="number" id="betAmount" placeholder="Enter bet amount" min="1">
+        <select id="betColor">
+            <option value="red">Red</option>
+            <option value="green">Green</option>
+            <option value="black">Black</option>
+        </select>
+        <button onclick="placeBet()">Submit Bet</button>
+    </div>
+    <button class="close-btn" onclick="closeCasino()">Close</button>
+</div>
+
+<button class="achievements-btn" onclick="openAchievements()">Achievements</button>
+<button class="casino-btn" onclick="openCasino()">Casino</button>
+
+<div class="notification" id="achievementNotification">Check achievements!</div>
+
+<div class="counter" id="counter">0</div>
+
+<script>
+    function openModal() {
+    document.getElementById('myModal').style.display = 'block';
+    
+}
+function closeModal() {
+    document.getElementById('myModal').style.display = 'none';
+}
+window.onload = openModal;  // Open the modal when the page loads
+
+window.onclick = function(event) {
+    if (event.target !== document.getElementById('myModal')) {
+        closeModal();  // Close if the user clicks outside the modal
+    }
+};
+
+    const wordList = ['Wisdom', 'Fate', 'Gold', 'Mystery', 'Destiny', 'Fortune', 'Power', 'Eternity'];
+    const achievements = {
+        paradoxer: false,
+        sourse: false,
+        future: false,
+        oneIn839299365868340200: false,
+        diavolo: false,
+        goldMode: false,
+        addiction: false,
+        baron: false
+    };
+
+    let counter = 0;
+
+    // Load saved data from localStorage
+    function loadProgress() {
+        const savedData = JSON.parse(localStorage.getItem('gameProgress'));
+        if (savedData) {
+            counter = savedData.counter || 0;
+            Object.assign(achievements, savedData.achievements);
+            updateCounterDisplay();
+            Object.keys(achievements).forEach(achievement => {
+                if (achievements[achievement]) {
+                    unlockAchievement(achievement);
+                }
+            });
+        }
+    }
+
+    // Save progress every minute
+    function saveProgress() {
+        const progress = {
+            counter,
+            achievements
+        };
+        localStorage.setItem('gameProgress', JSON.stringify(progress));
+    }
+
+    // Call saveProgress every 60 seconds
+    setInterval(saveProgress, 10000);
+
+    function spawnItems() {
+        const rows = document.querySelectorAll('.row');
+        rows.forEach(row => {
+            if (Math.random() < 0.1) {
+                const bImg = createImage('b.png', openBook);
+                row.appendChild(bImg);
+            }
+            if (Math.random() < 0.03) {
+                const gImg = createImage('g.png', openGoldMode);
+                row.appendChild(gImg);
+            }
+        });
+    }
+
+    function createImage(src, onClick) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.onclick = onClick;
+        img.style.animationDelay = `${Math.random() * 10}s`;
+        return img;
+    }
+
+    // Initialize game by loading saved progress
+    loadProgress();
+
+    function openBook() {
+        const randomText = generateRandomText(10);
+        const bookNumber = Math.floor(Math.random() * 9999999) + 1;
+
+        document.getElementById('bookTitle').textContent = `Book №${bookNumber}`;
+        document.getElementById('randomText').textContent = randomText;
+        document.getElementById('bookModal').style.display = 'block';
+
+        counter += 5;
+        updateCounterDisplay();
+
+        if (counter >= 10000 && !achievements.addiction) {
+            achievements.addiction = true;
+            unlockAchievement('addiction');
+            showNotification();
+        }
+
+        if (counter >= 5000 && !achievements.baron) {
+            achievements.baron = true;
+            unlockAchievement('baron');
+            showNotification();
+        }
+
+        checkAchievements(randomText, bookNumber);
+    }
+
+    function openGoldMode() {
+        const randomNumbers = generateRandomNumbers(10);
+        const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
+
+        document.getElementById('bookTitle').textContent = `Book of ${randomWord}`;
+        document.getElementById('randomText').textContent = randomNumbers;
+        document.getElementById('bookModal').style.display = 'block';
+
+        counter += 10;
+        updateCounterDisplay();
+
+        if (!achievements.goldMode) {
+            achievements.goldMode = true;
+            unlockAchievement('goldMode');
+            showNotification();
+        }
+    }
+
+    function closeBook() {
+        document.getElementById('bookModal').style.display = 'none';
+    }
+
+    function generateRandomText(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        return Array.from({ length }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+    }
+
+    function generateRandomNumbers(length) {
+        return Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
+    }
+
+    function checkAchievements(randomText, bookNumber) {
+        if (!achievements.paradoxer) {
+            achievements.paradoxer = true;
+            unlockAchievement('paradoxer');
+            showNotification();
+        }
+        if (!achievements.sourse && bookNumber === 1) {
+            achievements.sourse = true;
+            unlockAchievement('sourse');
+            showNotification();
+        }
+        if (randomText.toLowerCase().includes('futuristic') && !achievements.future) {
+            achievements.future = true;
+            unlockAchievement('future');
+            showNotification();
+        }
+        if (randomText.includes('Helloworld') && !achievements.oneIn839299365868340200) {
+            achievements.oneIn839299365868340200 = true;
+            unlockAchievement('oneIn839299365868340200');
+            showNotification();
+        }
+        if (randomText.toLowerCase().includes('giornogiov') && !achievements.diavolo) {
+            achievements.diavolo = true;
+            unlockAchievement('diavolo');
+            showNotification();
+        }
+    }
+
+    function unlockAchievement(achievement) {
+        document.getElementById(achievement).classList.add('unlocked');
+    }
+
+    function showNotification() {
+        const notification = document.getElementById('achievementNotification');
+        notification.style.display = 'block';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 3000);
+    }
+
+    function openAchievements() {
+        document.getElementById('achievementsModal').style.display = 'block';
+    }
+
+    function closeAchievements() {
+        document.getElementById('achievementsModal').style.display = 'none';
+    }
+
+    function openCasino() {
+        document.getElementById('casinoModal').style.display = 'block';
+    }
+
+    function closeCasino() {
+        document.getElementById('casinoModal').style.display = 'none';
+    }
+
+    function placeBet() {
+        const betAmount = parseInt(document.getElementById('betAmount').value);
+        if (betAmount > counter) {
+            alert("You don't have enough points to place this bet.");
+            return;
+        }
+
+        const betColor = document.getElementById('betColor').value;
+        const wheelRotation = Math.floor(Math.random() * 360);
+        document.getElementById('wheel').style.transform = `rotate(${wheelRotation}deg)`;
+
+        setTimeout(() => {
+            const winningColor = getWinningColor(wheelRotation);
+            if (winningColor === betColor) {
+                counter += betAmount * 2; // Double the bet
+                updateCounterDisplay();
+                alert("You win!");
+            } else {
+                counter -= betAmount; // Lose the bet
+                updateCounterDisplay();
+                alert("You lose!");
+            }
+        }, 3000);
+    }
+
+    function getWinningColor(rotation) {
+        if (rotation >= 0 && rotation < 120) return 'red';
+        if (rotation >= 120 && rotation < 240) return 'green';
+        return 'black'; // 240-360 degrees
+    }
+
+    function updateCounterDisplay() {
+        document.getElementById('counter').textContent = counter;
+    }
+
+    // Call spawnItems every second
+    setInterval(spawnItems, 1000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Capsule File Timer Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f9;
+    }
+    .container {
+      text-align: center;
+      width: 90%;
+      max-width: 600px;
+    }
+    .capsule {
+      margin-top: 20px;
+      border: 2px solid #4CAF50;
+      border-radius: 10px;
+      padding: 10px;
+      background-color: #e8f5e9;
+    }
+    .capsule-timer {
+      font-size: 18px;
+      color: #4CAF50;
+    }
+    .file-input, .date-input {
+      margin: 10px;
+    }
+    .launch-button {
+      padding: 10px 20px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .launch-button:hover {
+      background-color: #0b7dda;
+    }
+    .open-button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .open-button:hover {
+      background-color: #c62828;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Multi-Capsule File Timer Game</h1>
+  <p>Select your files and set the timer for each capsule.</p>
+
+  <input type="file" id="fileInput" class="file-input" multiple>
+  
+  <br>
+  <input type="number" id="year" placeholder="Year" class="date-input">
+  <input type="number" id="month" placeholder="Month" class="date-input" min="1" max="12">
+  <input type="number" id="day" placeholder="Day" class="date-input" min="1" max="31">
+  <input type="number" id="hour" placeholder="Hour" class="date-input" min="0" max="23">
+  <input type="number" id="minute" placeholder="Minute" class="date-input" min="0" max="59">
+  
+  <br>
+  <button class="launch-button" id="launchButton">Launch</button>
+
+  <div id="capsules"></div>
+</div>
+
+<script>
+  const launchButton = document.getElementById('launchButton');
+  const capsulesContainer = document.getElementById('capsules');
+  const fileInput = document.getElementById('fileInput');
+
+  // Initialize stored capsules
+  let capsules = JSON.parse(localStorage.getItem('capsules')) || [];
+
+  // Load existing capsules on page load
+  window.onload = () => {
+    capsules.forEach(displayCapsule);
+    startTimers();
+  };
+
+  // Handle file selection and encode files
+  fileInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    filesToStore = files.map(file => {
+      return {
+        name: file.name,
+        type: file.type,
+        content: null,
+      };
+    });
+
+    // Encode files as Base64
+    files.forEach((file, index) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        filesToStore[index].content = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
+  // Handle launch button click
+  launchButton.addEventListener('click', () => {
+    const year = parseInt(document.getElementById('year').value);
+    const month = parseInt(document.getElementById('month').value) - 1; // JavaScript months are 0-11
+    const day = parseInt(document.getElementById('day').value);
+    const hour = parseInt(document.getElementById('hour').value);
+    const minute = parseInt(document.getElementById('minute').value);
+
+    if (isNaN(year) || isNaN(month) || isNaN(day) || isNaN(hour) || isNaN(minute)) {
+      alert('Please complete all inputs.');
+      return;
+    }
+
+    if (filesToStore.length === 0) {
+      alert('Please select at least one file.');
+      return;
+    }
+
+    const selectedDate = new Date(year, month, day, hour, minute);
+    const launchTime = selectedDate.getTime();
+
+    if (launchTime <= Date.now()) {
+      alert('Launch time must be in the future.');
+      return;
+    }
+
+    // Create a new capsule
+    const capsule = {
+      id: Date.now(),
+      files: filesToStore,
+      launchTime: launchTime,
+    };
+
+    // Store capsule in localStorage
+    capsules.push(capsule);
+    localStorage.setItem('capsules', JSON.stringify(capsules));
+
+    // Clear file input and display capsule
+    fileInput.value = '';
+    displayCapsule(capsule);
+
+    startTimer(capsule);
+  });
+
+  function displayCapsule(capsule) {
+    const capsuleDiv = document.createElement('div');
+    capsuleDiv.classList.add('capsule');
+    capsuleDiv.id = `capsule-${capsule.id}`;
+    capsuleDiv.innerHTML = `
+      <p>Capsule ID: ${capsule.id}</p>
+      <p class="capsule-timer" id="timer-${capsule.id}"></p>
+      <button class="open-button" id="open-${capsule.id}" style="display: none;">Open</button>
+    `;
+    capsulesContainer.appendChild(capsuleDiv);
+
+    document.getElementById(`open-${capsule.id}`).addEventListener('click', () => {
+      openFiles(capsule);
+    });
+  }
+
+  function startTimers() {
+    capsules.forEach(capsule => startTimer(capsule));
+  }
+
+  function startTimer(capsule) {
+    const timerElement = document.getElementById(`timer-${capsule.id}`);
+    const openButton = document.getElementById(`open-${capsule.id}`);
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const timeLeft = capsule.launchTime - now;
+
+      if (timeLeft <= 0) {
+        clearInterval(interval);
+        timerElement.textContent = 'Time is up!';
+        openButton.style.display = 'block';
+      } else {
+        const seconds = Math.floor(timeLeft / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        timerElement.textContent = `${hours}:${minutes % 60}:${seconds % 60}`;
+      }
+    }, 1000);
+  }
+
+  function openFiles(capsule) {
+    capsule.files.forEach(file => {
+      const link = document.createElement('a');
+      link.href = file.content;
+      link.download = file.name;
+      link.click();
+    });
+
+    // Remove capsule from localStorage
+    capsules = capsules.filter(c => c.id !== capsule.id);
+    localStorage.setItem('capsules', JSON.stringify(capsules));
+
+    // Remove capsule element
+    document.getElementById(`capsule-${capsule.id}`).remove();
+  }
+</script>
+
+</body>
+</html>

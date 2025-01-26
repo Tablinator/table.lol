@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1c1c1c;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 4rem;
+            color: #f8bbd0; /* Light pink */
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Button Style */
+        button {
+            background-color: #ff4081; /* Bright pink */
+            color: white;
+            font-size: 1.5rem;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #f50057; /* Darker pink on hover */
+            transform: scale(1.1);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        /* Fun Animation for Buttons */
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+                margin-bottom: 20px;
+            }
+
+            p {
+                font-size: 1.2rem;
+            }
+
+            button {
+                width: 80%;
+                font-size: 1.2rem;
+                padding: 15px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>About Me</h1>
+
+    <p>
+        Welcome to my site! im an indie dev I want to make good content on this website im experimenting with diferent things.
+    </p> <br>
+    <p>
+        if you want you can suport me with kaspi heres the number
+                     +77055799506
+    </p>
+
+    <!-- Button to navigate back to the home page -->
+    <button onclick="location.href='index.html'">Back to Home</button>
+</body>
+</html>
