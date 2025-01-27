@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote: iPhone or Android</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .game-container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .question {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .vote-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 200px;
+        }
+
+        .vote-btn:hover {
+            background-color: #45a049;
+        }
+
+        .results {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .result {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <div class="question" id="question">Which phone do you prefer?</div>
+        <button class="vote-btn" onclick="vote('iphone')">iPhone</button>
+        <button class="vote-btn" onclick="vote('android')">Android</button>
+
+        <div class="results" id="results">
+            <div class="result" id="iphone-votes">iPhone: 0 votes</div>
+            <div class="result" id="android-votes">Android: 0 votes</div>
+        </div>
+    </div>
+
+    <script>
+        // Function to handle the voting
+        function vote(choice) {
+            // Send the vote to the backend server through ngrok URL
+            fetch('https://c030-77-240-40-0.ngrok-free.app/vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ choice: choice })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update vote counts from the backend
+                document.getElementById('iphone-votes').textContent = `iPhone: ${data.votes.iphone} votes`;
+                document.getElementById('android-votes').textContent = `Android: ${data.votes.android} votes`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+
+</body>
+</html>
