@@ -3,90 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vote: iPhone or Android</title>
+    <title>Voting Game</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .game-container {
             text-align: center;
-            background-color: white;
+            background-color: #f0f0f0;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 300px;
         }
 
-        .question {
-            font-size: 24px;
-            margin-bottom: 20px;
+        h1 {
+            color: #333;
         }
 
-        .vote-btn {
+        .vote-button {
             background-color: #4CAF50;
             color: white;
             border: none;
-            padding: 15px 20px;
+            padding: 15px 32px;
+            font-size: 20px;
+            cursor: pointer;
             margin: 10px;
             border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-            width: 200px;
         }
 
-        .vote-btn:hover {
+        .vote-button:hover {
             background-color: #45a049;
         }
 
         .results {
-            font-size: 18px;
             margin-top: 20px;
         }
-
-        .result {
-            margin-top: 10px;
+        
+        .results span {
+            font-size: 18px;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div class="game-container">
-        <div class="question" id="question">Which phone do you prefer?</div>
-        <button class="vote-btn" onclick="vote('iphone')">iPhone</button>
-        <button class="vote-btn" onclick="vote('android')">Android</button>
+    <h1>What’s Your Preference?</h1>
+    <h2>Choose your option:</h2>
 
-        <div class="results" id="results">
-            <div class="result" id="iphone-votes">iPhone: 0 votes</div>
-            <div class="result" id="android-votes">Android: 0 votes</div>
-        </div>
+    <button class="vote-button" id="iphone-button">iPhone</button>
+    <button class="vote-button" id="android-button">Android</button>
+
+    <div class="results">
+        <h3>Results:</h3>
+        <span id="iphone-votes">iPhone: 0 votes</span><br>
+        <span id="android-votes">Android: 0 votes</span>
     </div>
 
     <script>
-        // Function to handle the voting
-        function vote(choice) {
-            // Send the vote to the backend server through ngrok URL
-            fetch('https://c030-77-240-40-0.ngrok-free.app/vote', {
+        // Update the vote counts dynamically
+        function updateVotes() {
+            fetch('https://your-ngrok-url/vote', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ choice: choice })
+                body: JSON.stringify({
+                    choice: 'iphone' // or 'android' based on which button was clicked
+                })
             })
             .then(response => response.json())
             .then(data => {
-                // Update vote counts from the backend
+                // Update UI with new vote counts
                 document.getElementById('iphone-votes').textContent = `iPhone: ${data.votes.iphone} votes`;
                 document.getElementById('android-votes').textContent = `Android: ${data.votes.android} votes`;
             })
             .catch(error => console.error('Error:', error));
         }
+
+        // Button event listeners
+        document.getElementById('iphone-button').addEventListener('click', function() {
+            fetch('https://your-ngrok-url/vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    choice: 'iphone'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update the votes
+                document.getElementById('iphone-votes').textContent = `iPhone: ${data.votes.iphone} votes`;
+                document.getElementById('android-votes').textContent = `Android: ${data.votes.android} votes`;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('android-button').addEventListener('click', function() {
+            fetch('https://your-ngrok-url/vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    choice: 'android'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update the votes
+                document.getElementById('iphone-votes').textContent = `iPhone: ${data.votes.iphone} votes`;
+                document.getElementById('android-votes').textContent = `Android: ${data.votes.android} votes`;
+            })
+            .catch(error => console.error('Error:', error));
+        });
     </script>
 
 </body>
