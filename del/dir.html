@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale: 1.0">
+  <title>File Deletion Game</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Container for the icons */
+.icons-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column; /* Stack the icons vertically */
+  gap: 10px; /* Space between the icons */
+  z-index: 10;
+}
+
+/* General styles for the icons */
+.icon {
+  cursor: pointer;
+  width: 100px; /* Adjust the size */
+  height: auto;
+}
+
+    .achievements {
+  position: absolute;
+  top: 50px;
+  right: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  color: black;
+  width: 300px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  z-index: 10;
+}
+
+.achievements-header {
+  background-color: #0078d7;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  cursor: move;
+}
+
+.achievements-header button {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+
+.achievements-header button:hover {
+  background-color: #c9302c;
+}
+
+.achievements ul {
+  list-style: none;
+  margin: 0;
+  padding: 10px;
+}
+
+.achievements li {
+  margin: 5px 0;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.achievements li.grey {
+  background-color: lightgray;
+}
+
+.achievements li.black {
+  background-color: black;
+  color: white;
+}
+
+
+    body {
+      background-color: #0078d7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    .desktop {
+      background-color: #e5e5e5;
+      width: 90%;
+      max-width: 1200px;
+      height: 90vh;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+      position: relative;
+    }
+
+    .directory-container {
+      background-color: #fff;
+      color: black;
+      width: 60%;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+      height: 70%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .title-bar {
+      background-color: #0078d7;
+      padding: 10px;
+      border-radius: 6px 6px 0 0;
+      color: white;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+    }
+
+    .file-list {
+      margin-top: 10px;
+      background-color: #fff;
+      color: black;
+      border-radius: 6px;
+      padding: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .file {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 10px;
+      border-bottom: 1px solid #ccc;
+      align-items: center;
+    }
+
+    .file:last-child {
+      border-bottom: none;
+    }
+
+    .delete-btn {
+      background-color: #d9534f;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background-color 0.2s ease;
+    }
+
+    .delete-btn:hover {
+      background-color: #c9302c;
+    }
+
+    .score {
+      font-size: 20px;
+      margin-top: 10px;
+      text-align: right;
+      font-weight: bold;
+    }
+
+    .terminal {
+      background-color: #333;
+      color: white;
+      width: 400px;
+      padding: 10px;
+      border-radius: 5px;
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      cursor: default;
+      display: none;
+    }
+
+    .terminal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+      padding: 5px;
+      background-color: #0078d7;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .terminal-header img {
+      height: 20px;
+      margin-right: 10px;
+    }
+
+    .terminal-header button {
+      background-color: #d9534f;
+      border: none;
+      color: white;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .terminal-header button:hover {
+      background-color: #c9302c;
+    }
+
+    .terminal input {
+      background: transparent;
+      border: none;
+      color: white;
+      width: 100%;
+      font-size: 14px;
+      outline: none;
+      caret-color: #fff;
+    }
+
+    .terminal button {
+      background-color: #d9534f;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    .terminal button:hover {
+      background-color: #c9302c;
+    }
+
+    .output {
+      margin-top: 10px;
+    }
+
+    .terminal-icon {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      cursor: pointer;
+      transform: scale(0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="desktop">
+    <!-- Directory Container -->
+    <div class="directory-container" id="directory-container">
+      <div class="title-bar" id="title-bar">
+        <div>My Directory</div>
+        <span>🗂️</span>
+      </div>
+      <div class="file-list" id="file-list">
+        <!-- Files will be dynamically added here -->
+      </div>
+      <div class="score" id="score">Score: 0</div>
+    </div>
+
+    <div class="achievements" id="achievements-window" style="display: none;">
+      <div class="achievements-header" id="achievements-header">
+        <span>Achievements</span>
+        <button id="close-achievements">X</button>
+      </div>
+      <ul id="achievements-list">
+        <li data-achievement="clean-up" class="grey">It's time to clean up: delete your first file</li>
+        <li data-achievement="delete-200" class="grey">When it's gonna end?: delete 200 files</li>
+        <li data-achievement="pro" class="grey">Pro: open CMD</li>
+        <li data-achievement="used-before" class="grey">I've used this before: enter a valid command in CMD</li>
+        <li data-achievement="stop-deleting" class="grey">And don't delete anything: you've deleted so much already!</li>
+      </ul>
+    </div>
+    
+
+    <!-- Terminal App -->
+    <div class="terminal" id="terminal">
+      <div class="terminal-header" id="terminal-header">
+        <div>
+          <img src="t.png" alt="Terminal Icon"> Terminal
+        </div>
+        <button id="close-terminal">X</button>
+      </div>
+      <div>
+        <span>Terminal> </span><input type="text" id="command-input" placeholder="Enter command...">
+        <button id="execute-command">Execute</button>
+      </div>
+      <div class="output" id="output"></div>
+    </div>
+
+    <!-- Terminal Icon -->
+    <div class="icons-container">
+      <img src="t.png" alt="Terminal Icon" class="icon" id="terminal-icon" />
+      <img src="a.png" alt="Achievements Icon" class="icon" id="achievements-icon" />
+    </div>
+
+  <script>
+    const fileList = document.getElementById('file-list');
+    const scoreDisplay = document.getElementById('score');
+    const directoryContainer = document.getElementById('directory-container');
+    const titleBar = document.getElementById('title-bar');
+    const terminal = document.getElementById('terminal');
+    const terminalHeader = document.getElementById('terminal-header');
+    const closeTerminalButton = document.getElementById('close-terminal');
+    const commandInput = document.getElementById('command-input');
+    const executeCommandButton = document.getElementById('execute-command');
+    const output = document.getElementById('output');
+    const terminalIcon = document.getElementById('terminal-icon');
+    let score = 0;
+
+    // File extensions and random names list
+    const fileExtensions = ['.txt', '.jpg', '.png', '.docx', '.py', '.html', '.mp4', '.mp3', '.csv', '.exe'];
+    const randomFileNames = [
+      'ImportantDocument', 'ProjectPlan', 'MusicCollection', 'HolidayPhotos', 'CodeSnippet', 
+      'VideoClip', 'PhotoAlbum', 'Notes', 'TodoList', 'Backup', 'Logs', 'FinalDraft', 
+      'Blueprint', 'Presentation', 'SecretFile', 'BugReport', 'Invoice2023', 'BudgetSheet', 
+      'GameAssets', 'MovieNightList'
+    ];
+
+    // Generate a random file name
+    function generateRandomFile() {
+      if (Math.random() < 0.4) {
+        const randomName = randomFileNames[Math.floor(Math.random() * randomFileNames.length)];
+        const randomExt = fileExtensions[Math.floor(Math.random() * fileExtensions.length)];
+        return `${randomName}${randomExt}`;
+      } else {
+        const randomFileNumber = Math.floor(Math.random() * 1000) + 1;
+        const randomExt = fileExtensions[Math.floor(Math.random() * fileExtensions.length)];
+        return `File${randomFileNumber}${randomExt}`;
+      }
+    }
+
+    // Render files
+    function renderFiles() {
+      const newFile = generateRandomFile();
+      const fileDiv = document.createElement('div');
+      fileDiv.classList.add('file');
+      fileDiv.innerHTML = `
+        <span>${newFile}</span>
+        <button class="delete-btn">Delete</button>
+      `;
+      fileList.appendChild(fileDiv);
+    }
+
+    // Handle file deletion
+    fileList.addEventListener('click', (e) => {
+  const deleteButton = e.target.closest('.delete-btn'); // Ensure we are clicking on a valid delete button
+  if (deleteButton) {
+    const fileDiv = deleteButton.closest('.file'); // Get the file div that contains the delete button
+    if (fileDiv) {
+      fileDiv.remove(); // Remove the file from the list
+      score += 10; // Increase score
+      scoreDisplay.textContent = `Score: ${score}`; // Update score display
+      renderFiles(); // Add a new file
+    }
+  }
+});
+
+
+    // Terminal commands
+    function executeCommand(command) {
+      switch (command.toLowerCase()) {
+        case 'neal.fun':
+          window.open('https://neal.fun', '_blank');
+          break;
+        case 'hosting':
+          window.open('https://github.com/Tablinator/table.lol', '_blank');
+          break;
+        case 'deletion':
+          const filesToDelete = fileList.querySelectorAll('.file');
+          for (let i = 0; i < 100 && filesToDelete[i]; i++) {
+            filesToDelete[i].remove();
+          }
+          score += 200;
+          scoreDisplay.textContent = `Score: ${score}`;
+          output.innerHTML = `<div>Deleted 100 files! +200 score</div>`;
+          renderFiles();
+          break;
+        default:
+          output.innerHTML = `<div>The command "${command}" is not a command.</div>`;
+          break;
+      }
+    }
+
+    // Execute command on button click
+    executeCommandButton.addEventListener('click', () => {
+      const command = commandInput.value.trim();
+      if (command) {
+        executeCommand(command);
+      }
+      commandInput.value = '';
+    });
+
+    // Draggable Directory
+    let isDraggingDir = false;
+    let dirOffsetX, dirOffsetY;
+
+    titleBar.addEventListener('mousedown', (e) => {
+      isDraggingDir = true;
+      dirOffsetX = e.clientX - directoryContainer.offsetLeft;
+      dirOffsetY = e.clientY - directoryContainer.offsetTop;
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDraggingDir) {
+        directoryContainer.style.left = `${e.clientX - dirOffsetX}px`;
+        directoryContainer.style.top = `${e.clientY - dirOffsetY}px`;
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDraggingDir = false;
+    });
+
+    // Draggable Terminal
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    terminalHeader.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      offsetX = e.clientX - terminal.offsetLeft;
+      offsetY = e.clientY - terminal.offsetTop;
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        terminal.style.left = `${e.clientX - offsetX}px`;
+        terminal.style.top = `${e.clientY - offsetY}px`;
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    // Show terminal on icon click
+    terminalIcon.addEventListener('click', () => {
+      terminal.style.display = 'block';
+    });
+
+    // Close terminal
+    closeTerminalButton.addEventListener('click', () => {
+      terminal.style.display = 'none';
+    });
+
+    // Initial files render
+    for (let i = 0; i < 5; i++) {
+      renderFiles();
+    }
+
+    // Achievement Data
+const achievements = {
+  "clean-up": false,
+  "delete-200": false,
+  "pro": false,
+  "used-before": false,
+  "stop-deleting": false,
+};
+
+let fileDeleteCount = 0; // Track deleted files
+
+// Show Achievements Notification
+function showAchievementNotification() {
+  const notification = document.createElement("div");
+  notification.textContent = "✔️ Check Achievements!";
+  notification.style.position = "fixed";
+  notification.style.top = "10px";
+  notification.style.right = "10px";
+  notification.style.backgroundColor = "green";
+  notification.style.color = "white";
+  notification.style.padding = "10px";
+  notification.style.borderRadius = "5px";
+  notification.style.zIndex = "1000";
+  document.body.appendChild(notification);
+  setTimeout(() => notification.remove(), 2000);
+}
+
+// Unlock Achievement
+function unlockAchievement(key) {
+  if (!achievements[key]) {
+    achievements[key] = true;
+    document.querySelector(`[data-achievement="${key}"]`).classList.remove("grey");
+    document.querySelector(`[data-achievement="${key}"]`).classList.add("black");
+    showAchievementNotification();
+  }
+}
+
+// File Deletion Logic (Update)
+fileList.addEventListener("click", (e) => {
+  if (e.target.classList.contains("delete-btn")) {
+    e.target.parentElement.remove();
+    fileDeleteCount++;
+    score += 10;
+    scoreDisplay.textContent = `Score: ${score}`;
+    renderFiles();
+
+    if (fileDeleteCount === 1) unlockAchievement("clean-up");
+    if (fileDeleteCount === 200) unlockAchievement("delete-200");
+    if (fileDeleteCount === 500) unlockAchievement("stop-deleting");
+  }
+});
+
+// Terminal Open Logic
+terminalIcon.addEventListener("click", () => {
+  terminal.style.display = "block";
+  unlockAchievement("pro");
+});
+
+// Command Execution (Update)
+executeCommandButton.addEventListener("click", () => {
+  const command = commandInput.value.trim();
+  if (command) {
+    unlockAchievement("used-before");
+    executeCommand(command);
+  }
+  commandInput.value = "";
+});
+
+// Achievements Window Logic
+const achievementsIcon = document.getElementById("achievements-icon");
+const achievementsWindow = document.getElementById("achievements-window");
+const achievementsHeader = document.getElementById("achievements-header");
+const closeAchievementsButton = document.getElementById("close-achievements");
+
+achievementsIcon.addEventListener("click", () => {
+  achievementsWindow.style.display = "block";
+});
+
+closeAchievementsButton.addEventListener("click", () => {
+  achievementsWindow.style.display = "none";
+});
+
+// Dragging Achievements Window
+let isDraggingAchievements = false;
+let achievementsOffsetX, achievementsOffsetY;
+
+achievementsHeader.addEventListener("mousedown", (e) => {
+  isDraggingAchievements = true;
+  achievementsOffsetX = e.clientX - achievementsWindow.offsetLeft;
+  achievementsOffsetY = e.clientY - achievementsWindow.offsetTop;
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (isDraggingAchievements) {
+    achievementsWindow.style.left = `${e.clientX - achievementsOffsetX}px`;
+    achievementsWindow.style.top = `${e.clientY - achievementsOffsetY}px`;
+  }
+});
+
+document.addEventListener("mouseup", () => {
+  isDraggingAchievements = false;
+});
+
+  </script>
+</body>
+</html>
