@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Sypher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #222;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
+        }
+        h1 {
+            color: #00ff00;
+        }
+        input, button, textarea {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        textarea {
+            width: 80%;
+        }
+        button {
+            background-color: #28a745;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #encoded-result {
+            font-family: sans-serif;
+            font-size: 24px;
+            word-wrap: break-word;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Super Sypher</h1>
+        <p>keep in secret!</p>
+        
+        <textarea id="text-input" placeholder="Type your text here..." rows="4"></textarea>
+        
+        <div>
+            <button onclick="encryptText()">Encrypt Text</button>
+            <button onclick="decryptText()">Decrypt Text</button>
+        </div>
+        
+        <div id="encoded-result"></div>
+    </div>
+
+    <script>
+        const XOR_KEY = 123; // Simple XOR key
+
+        // Caesar Cipher (shift letters by N)
+        function caesarCipher(text, shift) {
+            return text.split('').map(char => {
+                const code = char.charCodeAt(0);
+                if (code >= 32 && code <= 126) {
+                    return String.fromCharCode(((code - 32 + shift) % 95) + 32);
+                }
+                return char;
+            }).join('');
+        }
+
+        // Reverse text
+        function reverseText(text) {
+            return text.split('').reverse().join('');
+        }
+
+        // XOR Cipher
+        function xorCipher(text, key) {
+            return text.split('').map(char => {
+                return String.fromCharCode(char.charCodeAt(0) ^ key);
+            }).join('');
+        }
+
+        // Base64 Encoding
+        function base64Encode(text) {
+            return btoa(text);
+        }
+
+        // Base64 Decoding
+        function base64Decode(text) {
+            return atob(text);
+        }
+
+        // Encrypt Text using all methods
+        function encryptText() {
+            const text = document.getElementById('text-input').value;
+
+            // Apply all encryption methods sequentially
+            let result = text;
+            result = caesarCipher(result, 3); // Caesar Cipher with shift 3
+            result = reverseText(result);      // Reverse the text
+            result = xorCipher(result, XOR_KEY); // XOR Cipher with a simple key
+            result = base64Encode(result);     // Base64 Encoding
+
+            // Display the final encrypted result
+            document.getElementById('encoded-result').textContent = result;
+        }
+
+        // Decrypt Text by reversing all encryption methods
+        function decryptText() {
+            const text = document.getElementById('text-input').value;
+
+            // First, decode the Base64
+            let result = base64Decode(text);
+
+            // Apply all decryption methods in reverse order
+            result = xorCipher(result, XOR_KEY); // Reverse XOR Cipher
+            result = reverseText(result);        // Reverse the text back
+            result = caesarCipher(result, -3);   // Reverse Caesar Cipher (shift -3)
+
+            // Display the final decrypted result
+            document.getElementById('encoded-result').textContent = result;
+        }
+    </script>
+</body>
+</html>
