@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Web Page</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .left-section, .right-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .left-section {
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+        .right-section {
+            background-color: #ffffff;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .styled-button {
+            padding: 15px 30px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #063363;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .styled-button:hover {
+            background-color: #0b3c70;
+        }
+    </style>
+</head>
+<body>
+    <div class="left-section">
+        <div>
+            <h1>Добропожаловать на бесполезный сайт</h1>
+            <p>Нажмите кнопку ниже, чтобы посетить случайный бесполезный сайт.</p>
+            <button class="styled-button" onclick="window.open('https://puginarug.com', '_blank')">рискнуть</button>
+        </div>
+    </div>
+    <div class="right-section">
+        <button class="styled-button" onclick="navigateTo('p1.html')">лучший</button>
+        <button class="styled-button" onclick="navigateTo('p2.html')">опасно</button>
+        <button class="styled-button" onclick="navigateTo('p3.html')">галактика</button>
+        <button class="styled-button" onclick="navigateTo('p4.html')">капча</button>
+    </div>
+    <script>
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+    </script>
+</body>
+</html>

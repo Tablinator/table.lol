@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danger Zone</title>
+    <style>
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            position: relative;
+            width: 400px;
+            height: 300px;
+        }
+        .cover {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: red;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 2;
+            transition: opacity 0.5s;
+        }
+        .cover.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>ВАЖНО: НЕ НАЖИМАТЬ</h1>
+    <div class="container">
+        <div class="cover" onclick="revealRickroll()">ОПАСНО</div>
+        <img id="rickroll" src="r.gif" width="400" height="300" style="display:none;">
+        <audio id="rickrollAudio" src="r.mp3" loop></audio>
+    </div>
+    <script>
+        function revealRickroll() {
+            document.querySelector(".cover").classList.add("hidden");
+            document.getElementById("rickroll").style.display = "block";
+            document.getElementById("rickrollAudio").play();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Найдите настоящую кнопку CAPTCHA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            overflow: hidden;
+        }
+        .buttons {
+            position: relative;
+            width: 90vw;
+            height: 80vh;
+            margin: auto;
+        }
+        .captcha-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 2px solid black;
+            background-color: lightgray;
+            position: absolute;
+            transition: top 0.5s ease, left 0.5s ease; /* Slower movement */
+        }
+    </style>
+</head>
+<body>
+    <h2>Найдите настоящую кнопку, чтобы продолжить</h2>
+    <div class="buttons" id="button-container"></div>
+    
+    <script>
+        function createButtons() {
+            const container = document.getElementById("button-container");
+            container.innerHTML = ""; 
+            let correctIndex = Math.floor(Math.random() * 10); // Pick the real button
+
+            for (let i = 0; i < 10; i++) {
+                let btn = document.createElement("button");
+                btn.innerText = "Нажми меня";
+                btn.classList.add("captcha-button");
+
+                // Set random initial position
+                btn.style.left = Math.random() * 30 + "vw";
+                btn.style.top = Math.random() * 30 + "vh";
+
+                if (i === correctIndex) {
+                    // Only the real button redirects
+                    btn.onclick = () => window.location.href = "pe1.html";
+                } else {
+                    // Fake buttons move away on hover
+                    btn.onmouseover = function() {
+                        let newX = Math.random() * 30 + "vw";
+                        let newY = Math.random() * 30 + "vh";
+                        this.style.left = newX;
+                        this.style.top = newY;
+                    };
+                    btn.onclick = () => alert("Неверно! Попробуйте снова.");
+                }
+
+                container.appendChild(btn);
+            }
+        }
+
+        createButtons();
+    </script>
+</body>
+</html>

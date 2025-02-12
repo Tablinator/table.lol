@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Progress Bar</title>
+    <style>
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .progress-container {
+            width: 80%;
+            max-width: 600px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(45deg, rgb(5, 84, 42), rgb(0, 255, 55));
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgb(73, 200, 48);
+            transition: width 0.2s ease-in-out;
+        }
+        .progress-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .start-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background: cyan;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 10px cyan;
+        }
+        .start-btn:hover {
+            background: blue;
+            box-shadow: 0 0 15px blue;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText">0%</div>
+    <p>Ты не сможешь материться, пока эта полоска не заполнится</p>
+    <button class="start-btn" onclick="startProgress()">Запустить полоску</button>
+
+    <script>
+        function startProgress() {
+            let bar = document.getElementById("progressBar");
+            let text = document.getElementById("progressText");
+            let width = 0;
+            
+            function increaseProgress() {
+                if (width < 98) { // Stops at 99%
+                    let speed = Math.max(0.1, (99 - width) / 100); // Slows down near the end
+                    width += Math.random() * speed; 
+                    bar.style.width = width + "%";
+                    text.textContent = Math.floor(width) + "%";
+                    
+                    setTimeout(increaseProgress, 300);
+                } else {
+                    text.textContent = "98% Почти...";
+                }
+            }
+            increaseProgress();
+        }
+    </script>
+
+</body>
+</html>

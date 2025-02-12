@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сертифицированный Прокрастинатор</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 24px;
+        }
+        .achievement {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        input[type="checkbox"] {
+            transform: scale(1.3);
+        }
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+        .reward-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .reward-popup img {
+            width: 100px;
+            margin-bottom: 10px;
+        }
+        .submit-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #ffcc00;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Сертифицированный Прокрастинатор</h1>
+        <p>Отмечай, сколько времени ты теряешь!</p>
+        <div id="achievements"></div>
+        <button class="submit-btn" onclick="showReward()">Получить награду</button>
+    </div>
+
+    <div class="reward-popup" id="rewardPopup">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/2._Gold_medal%2C_Brasil_Government.svg/1024px-2._Gold_medal%2C_Brasil_Government.svg.png" alt="Трофей">
+        <h2 id="rewardTitle">Награда</h2>
+        <p id="rewardText"></p>
+        <button class="submit-btn" onclick="closeReward()">Закрыть</button>
+    </div>
+
+    <script>
+        const achievements = [
+            "Завис в соцсетях больше 2 часов",
+            "Посмотрел 50 видео с котиками подряд",
+            "Читал комментарии в интернете 3+ часа",
+            "Пытался начать работу, но сначала убрался в комнате",
+            "Открыл вкладку с делами, но залип в мемах",
+            "Обновлял почту, надеясь, что работа исчезнет",
+            "Решил лечь спать, но остался в телефоне ещё 2 часа",
+            "Начал смотреть сериал, но посмотрел весь сезон",
+            "Завис в TikTok дольше 3 часов",
+            "Прочитал все комментарии на YouTube под видео",
+            "Запланировал дела, но не начал делать",
+            "Потратил час на выбор музыки перед работой",
+            "Искал новую игру, но потратил весь день на обзоры",
+            "Смотрел гайды, вместо того чтобы играть",
+            "Начал учить новый язык, но завис на мемах о нем",
+            "Открыл книгу, но листал соцсети между страницами",
+            "Выбирал обои для телефона вместо работы",
+            "Составил идеальный план, но так и не начал",
+            "Провел полчаса в Google, решая, что поесть",
+            "Обновлял погоду, чтобы найти оправдание не выходить",
+            "Открыл Wikipedia и оказался в статье про динозавров",
+            "Пролистал ленту, не помня, что искал",
+            "Записал To-Do список, но ни одно дело не сделал",
+            "Читал отзывы перед покупкой, но так и не купил",
+            "Смотрел ASMR, чтобы расслабиться, но не уснул",
+            "Изучал новую технику продуктивности, но не применил",
+            "Пробовал Pomodoro, но отвлекался после первой сессии",
+            "Играл в игру, но смотрел стримы, как играют другие",
+            "Искал вдохновение, но вместо этого залип на ютуб",
+            "Обновлял новости, ожидая чуда"
+        ];
+        
+        const rewards = [
+            "Начинающий прокрастинатор",
+            "Лёгкий откладыватель",
+            "Средний мастер откладывания",
+            "Эксперт по прокрастинации",
+            "Гранд-мастер прокрастинации",
+            "Легендарный уклонитель от дел"
+        ];
+        
+        const container = document.getElementById("achievements");
+
+        achievements.forEach((text, index) => {
+            const div = document.createElement("div");
+            div.className = "achievement";
+            div.innerHTML = `<label><input type="checkbox" id="ach${index}"> <span>${text}</span></label>`;
+            container.appendChild(div);
+        });
+        
+        function showReward() {
+            const checkedCount = document.querySelectorAll("input[type='checkbox']:checked").length;
+            const rewardText = document.getElementById("rewardText");
+            const rewardTitle = document.getElementById("rewardTitle");
+            
+            rewardTitle.textContent = "Поздравляем!";
+            rewardText.textContent = "Вы получили награду: " + rewards[Math.min(checkedCount, rewards.length - 1)];
+            document.getElementById("rewardPopup").style.display = "block";
+        }
+        
+        function closeReward() {
+            document.getElementById("rewardPopup").style.display = "none";
+        }
+    </script>
+</body>
+</html>
